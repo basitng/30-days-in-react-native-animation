@@ -1,142 +1,128 @@
 import {
-  View,
-  Text,
   Dimensions,
   StyleSheet,
-  FlatList,
-  Image,
-  Animated,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import React from "react";
-import { StatusBar } from "expo-status-bar";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import actions from "./Global/actions";
+import { Surface } from "react-native-paper";
 
-export default function App() {
-  const scrollX = React.useRef(new Animated.Value(0)).current;
+const _bgColor = "FFFFFFF";
+const _primaryColor = "#F263C0";
+const _secondaryColor = "#536bab";
+const _textColor = "#0D0D0D";
 
-  const { width, height } = Dimensions.get("screen");
-
-  const ITEM_WIDTH = width * 0.76;
-  const ITEM_HEIGHT = ITEM_WIDTH * 1.47;
-
-  // const images = [
-  //   "https://images.unsplash.com/photo-1662581871665-f299ba8ace07?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxMXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-  //   "https://images.unsplash.com/photo-1663857162939-8c5624a71bf9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxNXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-  //   "https://images.unsplash.com/photo-1663791088119-07535b0fafeb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxN3x8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-  //   "https://images.unsplash.com/photo-1663857647856-dd3dfbfa7d52?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyMnx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-  //   "https://images.unsplash.com/photo-1661956600654-edac218fea67?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwyNXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-  //   "https://images.unsplash.com/photo-1661956600654-edac218fea67?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwyNXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-  //   "https://images.unsplash.com/photo-1661956600654-edac218fea67?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwyNXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-  //   "https://images.unsplash.com/photo-1661956600654-edac218fea67?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwyNXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-  //   "https://images.unsplash.com/photo-1661956600654-edac218fea67?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwyNXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-  //   "https://images.unsplash.com/photo-1661956600654-edac218fea67?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwyNXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-  //   "https://images.unsplash.com/photo-1661956600654-edac218fea67?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwyNXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-  //   "https://images.unsplash.com/photo-1661956600654-edac218fea67?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwyNXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-  // ];
-
-  const images = [
-    require("./assets/img1.jpg"),
-    require("./assets/img2.jpg"),
-    require("./assets/img3.jpg"),
-    require("./assets/img4.jpg"),
-    require("./assets/img5.jpg"),
-    require("./assets/img6.jpg"),
-    require("./assets/img6.jpg"),
-    require("./assets/img6.jpg"),
-  ];
-
-  const _bgColor = ["tomato", "orange", "green", "yellow", "blue", "purple"];
-  const data = images.map((image, index) => ({
-    key: String(index),
-    photo: image,
-    avatar_url: `https://randomuser.me/api/portraits/women/${Math.floor(
-      Math.random() * 40
-    )}.jpg`,
-  }));
+const { width, height } = Dimensions.get("screen");
+const App = () => {
   return (
-    <View style={{ flex: 1 }}>
-      <StatusBar hidden />
-      <Animated.FlatList
-        data={data}
-        keyExtractor={(item) => item.key}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        pagingEnabled
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX, x: scrollX } } }],
-          { useNativeDriver: true }
-        )}
-        renderItem={({ item, index }) => {
-          const inputRange = [
-            (index - 1) * width,
-            index * width,
-            (index + 1) * width,
-          ];
+    <View style={styles.container}>
+      <View style={styles.contactInfo}>
+        <View style={styles.contactInfoAvatar}>
+          <Text style={styles.contactInfoNameIndex}>A</Text>
+        </View>
+        <Text style={styles.contactInfoNetwork}>
+          Calling Vis{" "}
+          <Text
+            style={{ ...styles.contactInfoNetwork, color: _secondaryColor }}
+          >
+            {" "}
+            MTN - NG{" "}
+          </Text>
+        </Text>
+        <Text style={styles.contactInfoName}>Namesake</Text>
+        <Text style={styles.contactInfoNumber}>Custom 07062602401</Text>
+      </View>
 
-          const translateX = scrollX.interpolate({
-            inputRange,
-            outputRange: [-width * 0.7, 0, width * 0.7],
-          });
+      <View style={styles.contactActionBtns}>
+        {actions.map((item) => (
+          <TouchableOpacity key={item.id}>
+            <View style={styles.contactActionBtn}>
+              {item.icon}
+              <Text style={styles.contactActionBtnText}>{item.text}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
 
-          return (
-            <Animated.View
-              style={{
-                width,
-                justifyContent: "center",
-                backgroundColor: "#EEE",
-                alignItems: "center",
-              }}
-            >
-              <View
-                style={{
-                  borderRadius: 18,
-                  borderWidth: 10,
-                  borderColor: "#fff",
-                }}
-              >
-                <View
-                  style={{
-                    width: ITEM_WIDTH,
-                    height: ITEM_HEIGHT,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    overflow: "hidden",
-                  }}
-                >
-                  <Animated.Image
-                    source={item.photo}
-                    style={{
-                      width: ITEM_WIDTH,
-                      height: ITEM_HEIGHT,
-                      resizeMode: "cover",
-                      borderRadius: 17,
-                      transform: [{ translateX }],
-                    }}
-                  />
-                </View>
-                <Image
-                  source={{ uri: item.avatar_url }}
-                  style={{
-                    width: 60,
-                    height: 60,
-                    position: "absolute",
-                    bottom: -30,
-                    right: 60,
-                    borderRadius: 80,
-                    borderWidth: 6,
-                    borderColor: "#fff",
-                  }}
-                />
-              </View>
-            </Animated.View>
-          );
-        }}
-      />
+      <Surface elevation={10} style={{ borderRadius: 100 }}>
+        <TouchableOpacity>
+          <View style={styles.callBTN}>
+            <MaterialIcons name="call-end" size={30} color="white" />
+          </View>
+        </TouchableOpacity>
+      </Surface>
     </View>
   );
-}
+};
+
+export default App;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    background: _bgColor,
+    justifyContent: "space-evenly",
+    alignItems: "center",
+  },
+  contactInfo: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 70,
+  },
+  contactInfoAvatar: {
+    width: 80,
+    height: 80,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: _primaryColor,
+    borderRadius: 100,
+  },
+  contactInfoNameIndex: {
+    fontSize: 30,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+  },
+  contactInfoNetwork: {
+    fontSize: 16,
+    paddingTop: 10,
+    paddingBottom: 5,
+  },
+  contactInfoName: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#333333100",
+  },
+  contactInfoNumber: {
+    fontSize: 16,
+    paddingTop: 10,
+  },
+  contactActionBtns: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    flexWrap: "wrap",
+    paddingHorizontal: 2,
+  },
+  contactActionBtn: {
+    width: width / 3 - 10,
+    height: width / 3 - 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  contactActionBtnText: {
+    fontSize: 14,
+    paddingTop: 10,
+    color: _textColor,
+  },
+  callBTN: {
+    width: width / 6,
+    height: width / 6,
+    backgroundColor: "#D93030",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 100,
   },
 });
